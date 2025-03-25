@@ -20,11 +20,11 @@
 
     <script>
         async function getWeather() {
-            const apiKey = "e87eb95d5af785c8fa75755fbfa8788b";  
+            const apiKey = "e87eb95d5af785c8fa75755fbfa8788b"; 
             const city = document.getElementById("city").value || "Budapest";
 
             try {
-                // Aktuális időjárás lekérdezése
+                // Aktuális időjárás lekérése
                 const currentResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=hu`);
                 const currentData = await currentResponse.json();
                 if (currentData.cod !== 200) throw new Error(currentData.message);
@@ -37,14 +37,16 @@
                     <p>💨 Szélsebesség: ${currentData.wind.speed} m/s</p>
                 `;
 
-                // 4 napos előrejelzés lekérdezése
                 const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=hu`);
                 const forecastData = await forecastResponse.json();
                 if (forecastData.cod !== "200") throw new Error(forecastData.message);
 
+                console.log("API válasz az előrejelzéshez:", forecastData); 
+
                 const forecastList = processForecastData(forecastData.list);
                 displayForecast(forecastList);
             } catch (error) {
+                console.error("Hiba:", error);
                 document.getElementById("current-weather").innerHTML = `<p>Hiba: ${error.message}</p>`;
                 document.getElementById("forecast").innerHTML = "";
             }
@@ -78,7 +80,7 @@
 
         function displayForecast(forecastData) {
             let html = `<h2>4 napos előrejelzés</h2>`;
-            forecastData.slice(1).forEach(day => {  // 🔹 Az első nap a mai, ezért kihagyjuk
+            forecastData.slice(1).forEach(day => {  
                 html += `
                     <div class="day">
                         <h3>${day.date}</h3>
